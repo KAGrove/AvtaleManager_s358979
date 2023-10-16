@@ -4,18 +4,18 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
-@Entity(primaryKeys = {"avtaleId", "kid"},
+@Entity(primaryKeys = {"avtale_id", "kid"},  // Endre her fra avtaleId til avtale_id
         foreignKeys = {
                 @ForeignKey(entity = Avtale.class,
                         parentColumns = "avtaleId",
-                        childColumns = "avtaleId",
+                        childColumns = "avtale_id",  // Endre her fra avtaleId til avtale_id
                         onDelete = ForeignKey.CASCADE),
                 @ForeignKey(entity = Kontakt.class,
                         parentColumns = "kid",
                         childColumns = "kid",
                         onDelete = ForeignKey.CASCADE)
         })
-public class AvtaleVenn {
+public class Deltakelse {
 
     @ColumnInfo(name = "avtale_id")
     public int avtaleId;

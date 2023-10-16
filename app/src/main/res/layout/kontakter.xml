@@ -5,27 +5,71 @@
     android:layout_height="match_parent"
     tools:context=".KontakterFragment">
 
-    <!-- TextView and Button displayed in Second Fragment -->
+    <!-- TextView for "fornavn" -->
     <TextView
+        android:id="@+id/fornavnLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="This is the Kontakter Fragment"
-        android:textColor="@color/black"
-        android:textSize="25sp" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Fornavn:"
+        android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="fill_parent"
+    <!-- EditText for "fornavn" input -->
+    <EditText
+        android:id="@+id/fornavn"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="#00ff00"
-        android:text="Second Fragment"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_toEndOf="@id/fornavnLabel"
+        android:layout_alignBaseline="@id/fornavnLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="32dp"
+        android:hint="Skriv fornavn her" />
+
+    <!-- TextView for "etternavn" -->
+    <TextView
+        android:id="@+id/etternavnLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fornavn"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Etternavn:"
+        android:textSize="18sp" />
+
+    <!-- EditText for "etternavn" input -->
+    <EditText
+        android:id="@+id/etternavn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/etternavnLabel"
+        android:layout_alignBaseline="@id/etternavnLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="32dp"
+        android:hint="Skriv etternavn her" />
+
+    <!-- Button for saving the user -->
+    <Button
+        android:id="@+id/lagre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etternavn"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="Lagre"
+        android:textSize="18sp" />
+
+    <!-- Button for showing the user -->
+    <Button
+        android:id="@+id/vis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lagre"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="Vis"
+        android:textSize="18sp" />
 
 </RelativeLayout>
