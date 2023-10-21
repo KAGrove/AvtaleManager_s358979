@@ -35,7 +35,7 @@ public class KontaktAdapter extends ArrayAdapter<Kontakt> {
 
         TextView textView = rowView.findViewById(R.id.kontaktName);
         Kontakt currentKontakt = kontakter.get(position);
-        textView.setText(currentKontakt.getFirstName() + " " + currentKontakt.getLastName());
+        textView.setText(currentKontakt.getFirstName() + " " + currentKontakt.getLastName() + "\n" + currentKontakt.getPhoneNumber());
 
         Button btnEndre = rowView.findViewById(R.id.btnEndre);
         btnEndre.setOnClickListener(new View.OnClickListener() {

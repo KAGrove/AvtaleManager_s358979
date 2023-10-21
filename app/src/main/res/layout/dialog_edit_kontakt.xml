@@ -17,4 +17,10 @@
         android:layout_height="wrap_content"
         android:hint="Etternavn"/>
 
+    <EditText
+        android:id="@+id/editTelefonnr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Telefonnummer"/>
+
 </LinearLayout>

@@ -22,7 +22,7 @@ import java.util.List;
 public class KontakterFragment extends Fragment implements KontaktAdapter.OnEditButtonClickListener {
     View view;
     Button btnLagre, btnVis;
-    EditText editTextFornavn, editTextEtternavn;
+    EditText editTextFornavn, editTextEtternavn, editTextTelefonnr;
     ListView listView;
 
     @Override
@@ -32,6 +32,7 @@ public class KontakterFragment extends Fragment implements KontaktAdapter.OnEdit
         // Initierer elementene
         editTextFornavn = view.findViewById(R.id.fornavn);
         editTextEtternavn = view.findViewById(R.id.etternavn);
+        editTextTelefonnr = view.findViewById(R.id.telefonnr);
         listView = view.findViewById(R.id.visalle);
 
         btnLagre = view.findViewById(R.id.lagre);
@@ -59,6 +60,7 @@ public class KontakterFragment extends Fragment implements KontaktAdapter.OnEdit
     private void saveKontakt() {
         final String fornavn = editTextFornavn.getText().toString().trim();
         final String etternavn = editTextEtternavn.getText().toString().trim();
+        final String telefonNr = editTextTelefonnr.getText().toString().trim();
 
         class SaveKontakt extends AsyncTask<Void, Void, Void> {
             @Override
@@ -66,6 +68,7 @@ public class KontakterFragment extends Fragment implements KontaktAdapter.OnEdit
                 Kontakt kontakt = new Kontakt();
                 kontakt.setFirstName(fornavn);
                 kontakt.setLastName(etternavn);
+                kontakt.setPhoneNumber(telefonNr);
                 DatabaseClient.getInstance(getActivity().getApplicationContext())
                         .getAppDatabase()
                         .kontaktDao()
@@ -124,10 +127,13 @@ public class KontakterFragment extends Fragment implements KontaktAdapter.OnEdit
 
         EditText editFornavn = editView.findViewById(R.id.editFornavn);
         EditText editEtternavn = editView.findViewById(R.id.editEtternavn);
+        EditText editTelefonnr = editView.findViewById(R.id.editTelefonnr);
 
         // Sett nåværende verdier
         editFornavn.setText(kontakt.getFirstName());
         editEtternavn.setText(kontakt.getLastName());
+        editTelefonnr.setText(kontakt.getPhoneNumber());
+
 
         editDialog.setView(editView);
         editDialog.setTitle("Rediger kontakt");
@@ -136,10 +142,12 @@ public class KontakterFragment extends Fragment implements KontaktAdapter.OnEdit
             public void onClick(DialogInterface dialog, int which) {
                 String nyttFornavn = editFornavn.getText().toString();
                 String nyttEtternavn = editEtternavn.getText().toString();
+                String nyttTelefonnr = editTelefonnr.getText().toString();
 
                 // Oppdater databasen med de nye verdiene
                 kontakt.setFirstName(nyttFornavn);
                 kontakt.setLastName(nyttEtternavn);
+                kontakt.setPhoneNumber(nyttTelefonnr);
 
                 // Her kan du nå oppdatere kontakten i databasen.
                 updateKontakt(kontakt);

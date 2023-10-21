@@ -15,6 +15,9 @@ public class Kontakt {
     @ColumnInfo(name = "last_name")
     public String lastName;
 
+    @ColumnInfo(name = "phone_number")
+    public String phoneNumber;
+
     public int getUid() {
         return kid;
     }
@@ -37,5 +40,13 @@ public class Kontakt {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
