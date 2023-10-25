@@ -5,26 +5,92 @@
     android:layout_height="match_parent"
     tools:context=".AvtalerFragment">
 
+    <!-- TextView for "dato" -->
     <TextView
+        android:id="@+id/datoLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="This is the Avtale Fragment"
-        android:textColor="@color/black"
-        android:textSize="25sp" />
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Dato:"
+        android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="fill_parent"
+    <!-- EditText for "dato" input -->
+    <EditText
+        android:id="@+id/dato"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="#00ff00"
-        android:text="First Fragment"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_toEndOf="@id/datoLabel"
+        android:layout_alignBaseline="@id/datoLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="32dp"
+        android:hint="Skriv dato her" />
+
+    <!-- TextView for "klokkeslett" -->
+    <TextView
+        android:id="@+id/klokkeslettLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/datoLabel"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Klokkeslett:"
+        android:textSize="18sp" />
+
+    <!-- EditText for "klokkeslett" input -->
+    <EditText
+        android:id="@+id/klokkeslett"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/klokkeslettLabel"
+        android:layout_alignBaseline="@id/klokkeslettLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="32dp"
+        android:hint="Skriv klokkeslett her" />
+
+    <!-- TextView for "sted" -->
+    <TextView
+        android:id="@+id/stedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/klokkeslettLabel"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="Sted:"
+        android:textSize="18sp" />
+
+    <!-- EditText for "sted" input -->
+    <EditText
+        android:id="@+id/sted"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/stedLabel"
+        android:layout_alignBaseline="@id/stedLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="32dp"
+        android:hint="Skriv treffsted her" />
+
+
+    <!-- ListView for displaying and selecting contacts -->
+    <ListView
+        android:id="@+id/kontaktListe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/stedLabel"
+        android:layout_marginTop="16dp"
+        android:choiceMode="multipleChoice"
+        android:listSelector="@android:color/darker_gray" />
+
+    <!-- Button for saving the appointment -->
+    <Button
+        android:id="@+id/lagreAvtale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/kontaktListe"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="Lagre Avtale"
+        android:textSize="18sp" />
 
 </RelativeLayout>
