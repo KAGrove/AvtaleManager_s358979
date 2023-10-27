@@ -65,7 +65,7 @@ public class AvtalerFragment extends Fragment {
         avtaleAdapter = new AvtaleAdapter(getContext(), avtaleListe);
         avtaleListView.setAdapter(avtaleAdapter);
 
-        new FetchAvtalerTask().execute();
+        new FetchAvtalerTask(kontaktDao).execute();
 
         avtaleAdapter.notifyDataSetChanged();
 
@@ -169,50 +169,56 @@ public class AvtalerFragment extends Fragment {
     }
 
 
-    private class FetchAvtalerTask extends AsyncTask<Void, Void, List<Pair<Avtale, List<Deltakelse>>>> {
+    private class FetchAvtalerTask extends AsyncTask<Void, Void, List<Pair<Avtale, String>>> {
+        private KontaktDao mKontaktDao;
+
+        public FetchAvtalerTask(KontaktDao kontaktDao) {
+            mKontaktDao = kontaktDao;
+        }
 
         @Override
-        protected List<Pair<Avtale, List<Deltakelse>>> doInBackground(Void... voids) {
-            List<Pair<Avtale, List<Deltakelse>>> result = new ArrayList<>();
+        protected List<Pair<Avtale, String>> doInBackground(Void... voids) {
+            List<Pair<Avtale, String>> result = new ArrayList<>();
 
             // Hent avtalene fra databasen
             List<Avtale> avtaler = avtaleDao.getAll();
 
             for (Avtale avtale : avtaler) {
                 List<Deltakelse> deltakelser = deltakelseDao.getDeltakelserForAvtale(avtale.getAvtaleId());
-                result.add(new Pair<>(avtale, deltakelser));
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(List<Pair<Avtale, List<Deltakelse>>> fetchedData) {
-            avtaleListe.clear();
-
-            for (Pair<Avtale, List<Deltakelse>> pair : fetchedData) {
-                Avtale avtale = pair.first;
-                List<Deltakelse> deltakelser = pair.second;
 
                 // Gjør om deltakelser til en streng med kontaktinformasjon
                 StringBuilder kontakterBuilder = new StringBuilder();
                 for (Deltakelse deltakelse : deltakelser) {
-                    kontakterBuilder.append(deltakelse.getKid()).append(", ");
+                    Kontakt kontakt = mKontaktDao.getKontaktById(deltakelse.getKid());
+                    kontakterBuilder.append(kontakt.getFirstName()).append(" ").append(kontakt.getLastName()).append(", ");
                 }
                 // Fjerner siste komma og mellomrom for en renere format
                 if (kontakterBuilder.length() > 0) {
                     kontakterBuilder.setLength(kontakterBuilder.length() - 2);
                 }
 
-                String avtaleTekst = avtale.getDato() + " " + avtale.getKlokkeslett() + " - " + avtale.getTreffsted() + "\nKontakter: " + kontakterBuilder.toString();
-                avtaleListe.add(avtaleTekst);
+                String kontakterTekst = kontakterBuilder.toString();
+                result.add(new Pair<>(avtale, kontakterTekst));
             }
 
-            avtaleAdapter.notifyDataSetChanged();
+            return result;
         }
 
+        @Override
+        protected void onPostExecute(List<Pair<Avtale, String>> fetchedData) {
+            avtaleListe.clear();
 
+            for (Pair<Avtale, String> pair : fetchedData) {
+                Avtale avtale = pair.first;
+                String kontakterTekst = pair.second;
+
+                String avtaleTekst = avtale.getDato() + " " + avtale.getKlokkeslett() + " - " + avtale.getTreffsted() + "\nKontakter: " + kontakterTekst;
+                avtaleListe.add(avtaleTekst);
+            }
+            avtaleAdapter.notifyDataSetChanged();
+        }
     }
+
 
 
 
