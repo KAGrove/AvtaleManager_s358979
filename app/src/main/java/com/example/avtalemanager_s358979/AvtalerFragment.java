@@ -7,9 +7,11 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,10 +26,12 @@ public class AvtalerFragment extends Fragment {
 
     private List<Kontakt> kontakter;
     private ArrayAdapter<Kontakt> adapter;
-
     private MultiSpinner multiSpinner;
-
     private List<Kontakt> valgteKontakter = new ArrayList<>();
+    private ListView avtaleListView;
+    private List<String> avtaleListe = new ArrayList<>();
+    private AvtaleAdapter avtaleAdapter;
+
 
     private AvtaleDao avtaleDao;
     private DeltakelseDao deltakelseDao;
@@ -52,6 +56,20 @@ public class AvtalerFragment extends Fragment {
         EditText klokkeslettEditText = view.findViewById(R.id.klokkeslett);
         EditText stedEditText = view.findViewById(R.id.sted);
 
+
+        // Initialiser ListView først
+        avtaleListView = view.findViewById(R.id.avtaleListView);
+
+        // Deretter opprett og sett adapteren
+        avtaleAdapter = new AvtaleAdapter(getContext(), avtaleListe);
+        avtaleListView.setAdapter(avtaleAdapter);
+
+        // Dummy data for testing
+        avtaleListe.add("Avtale 1: 12:00 - Møte");
+        avtaleListe.add("Avtale 2: 14:00 - Tannlege");
+        avtaleAdapter.notifyDataSetChanged();
+
+
         btnLagreAvtale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,12 +84,13 @@ public class AvtalerFragment extends Fragment {
                 String stedString = stedEditText.getText().toString();
                 nyAvtale.setTreffsted(stedString);
 
+                String avtaleTekst = "Avtale: " + klokkeslettString + " - " + stedString;
+                avtaleListe.add(avtaleTekst);
+                avtaleAdapter.notifyDataSetChanged(); // Oppdater adapteren etter å ha lagt til en avtale.
+
                 lagreAvtale(nyAvtale, valgteKontakter);
             }
         });
-
-
-
 
 
 

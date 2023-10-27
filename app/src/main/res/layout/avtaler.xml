@@ -92,4 +92,12 @@
         android:text="Lagre Avtale"
         android:textSize="18sp" />
 
+    <ListView
+        android:id="@+id/avtaleListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/lagreAvtale"
+        android:layout_marginTop="16dp" />
+
+
 </RelativeLayout>
