@@ -1,30 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Tilpassede Innstillinger">
+    <SwitchPreferenceCompat
+        android:key="sms_service_key"
+        android:title="SMS Tjeneste"
+        android:summary="Slå SMS-tjenesten av eller på"
+        android:defaultValue="false" />
 
-        <!-- Her er et tekstfelt hvor brukeren kan sette en tilpasset verdi -->
-        <EditTextPreference
-            android:key="custom_key"
-            android:title="Tilpasset Tittel"
-            android:summary="Skriv inn en tilpasset verdi"
-            android:defaultValue="Standard verdi"
-            android:inputType="text" />
+<!--    <TimePickerPreference-->
+<!--        android:key="sms_time"-->
+<!--        android:title="Tidspunkt for SMS"-->
+<!--        android:defaultValue="06:00"-->
+<!--        android:summary="Velg tidspunktet SMS skal sendes" />-->
 
-        <!-- Her er en bryter for å slå på eller av en tilpasset funksjon -->
-        <SwitchPreferenceCompat
-            android:key="custom_switch"
-            android:title="Tilpasset Bryter"
-            android:summary="Slå av/på tilpasset funksjon"
-            android:defaultValue="false" />
-
-        <!-- Her er en avkrysningsboks for en annen tilpasset funksjon -->
-        <CheckBoxPreference
-            android:key="custom_checkbox"
-            android:title="Tilpasset Avkrysningsboks"
-            android:summary="Velg for tilpasset valg"
-            android:defaultValue="true" />
-
-    </PreferenceCategory>
+    <EditTextPreference
+        android:key="sms_default_message"
+        android:title="Standard SMS-melding"
+        android:inputType="text"
+        android:summary="Sett standard melding som skal sendes i SMS"
+        android:defaultValue="Din standardmelding her" />
 
 </PreferenceScreen>
