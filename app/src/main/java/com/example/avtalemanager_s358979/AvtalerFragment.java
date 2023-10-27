@@ -3,6 +3,7 @@ package com.example.avtalemanager_s358979;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,9 +65,8 @@ public class AvtalerFragment extends Fragment {
         avtaleAdapter = new AvtaleAdapter(getContext(), avtaleListe);
         avtaleListView.setAdapter(avtaleAdapter);
 
-        // Dummy data for testing
-        avtaleListe.add("Avtale 1: 12:00 - Møte");
-        avtaleListe.add("Avtale 2: 14:00 - Tannlege");
+        new FetchAvtalerTask().execute();
+
         avtaleAdapter.notifyDataSetChanged();
 
 
@@ -166,6 +166,52 @@ public class AvtalerFragment extends Fragment {
                 // Her kan du oppdatere brukergrensesnittet etter at databasetransaksjonen er fullført, om nødvendig.
             }
         }.execute();
+    }
+
+
+    private class FetchAvtalerTask extends AsyncTask<Void, Void, List<Pair<Avtale, List<Deltakelse>>>> {
+
+        @Override
+        protected List<Pair<Avtale, List<Deltakelse>>> doInBackground(Void... voids) {
+            List<Pair<Avtale, List<Deltakelse>>> result = new ArrayList<>();
+
+            // Hent avtalene fra databasen
+            List<Avtale> avtaler = avtaleDao.getAll();
+
+            for (Avtale avtale : avtaler) {
+                List<Deltakelse> deltakelser = deltakelseDao.getDeltakelserForAvtale(avtale.getAvtaleId());
+                result.add(new Pair<>(avtale, deltakelser));
+            }
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(List<Pair<Avtale, List<Deltakelse>>> fetchedData) {
+            avtaleListe.clear();
+
+            for (Pair<Avtale, List<Deltakelse>> pair : fetchedData) {
+                Avtale avtale = pair.first;
+                List<Deltakelse> deltakelser = pair.second;
+
+                // Gjør om deltakelser til en streng med kontaktinformasjon
+                StringBuilder kontakterBuilder = new StringBuilder();
+                for (Deltakelse deltakelse : deltakelser) {
+                    kontakterBuilder.append(deltakelse.getKid()).append(", ");
+                }
+                // Fjerner siste komma og mellomrom for en renere format
+                if (kontakterBuilder.length() > 0) {
+                    kontakterBuilder.setLength(kontakterBuilder.length() - 2);
+                }
+
+                String avtaleTekst = avtale.getDato() + " " + avtale.getKlokkeslett() + " - " + avtale.getTreffsted() + "\nKontakter: " + kontakterBuilder.toString();
+                avtaleListe.add(avtaleTekst);
+            }
+
+            avtaleAdapter.notifyDataSetChanged();
+        }
+
+
     }
 
 

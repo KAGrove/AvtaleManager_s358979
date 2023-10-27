@@ -22,4 +22,7 @@ public interface KontaktDao {
 
     @Update
     void update(Kontakt kontakt);
+
+    @Query("SELECT * FROM kontakt WHERE kid = :kid")
+    Kontakt getKontaktById(int kid);
 }
