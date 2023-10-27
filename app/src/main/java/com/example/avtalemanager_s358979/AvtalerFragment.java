@@ -84,13 +84,13 @@ public class AvtalerFragment extends Fragment {
                 String stedString = stedEditText.getText().toString();
                 nyAvtale.setTreffsted(stedString);
 
-                String avtaleTekst = "Avtale: " + klokkeslettString + " - " + stedString;
-                avtaleListe.add(avtaleTekst);
-                avtaleAdapter.notifyDataSetChanged(); // Oppdater adapteren etter å ha lagt til en avtale.
-
                 lagreAvtale(nyAvtale, valgteKontakter);
+
+                // Hent avtalene på nytt fra databasen
+                new FetchAvtalerTask(kontaktDao).execute();
             }
         });
+
 
 
 
