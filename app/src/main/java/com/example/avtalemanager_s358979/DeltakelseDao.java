@@ -17,6 +17,9 @@ public interface DeltakelseDao {
     @Insert
     void insert(Deltakelse deltakelse);
 
+    @Query("SELECT * FROM Deltakelse WHERE avtale_id = :avtaleId")
+    List<Deltakelse> getDeltakelserForAvtale(int avtaleId);
+
     @Delete
     void delete(Deltakelse deltakelse);
 

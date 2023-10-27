@@ -15,7 +15,7 @@ public interface AvtaleDao {
     List<Avtale> getAll();
 
     @Insert
-    void insert(Avtale avtale);
+    long insert(Avtale avtale);
 
     @Delete
     void delete(Avtale avtale);

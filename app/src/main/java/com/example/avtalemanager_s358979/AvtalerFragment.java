@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +27,18 @@ public class AvtalerFragment extends Fragment {
 
     private List<Kontakt> valgteKontakter = new ArrayList<>();
 
+    private AvtaleDao avtaleDao;
+    private DeltakelseDao deltakelseDao;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.avtaler, container, false);
+
+        // Initialiser databasen
+        AppDatabase db = DatabaseClient.getInstance(getActivity().getApplicationContext()).getAppDatabase();
+        avtaleDao = db.avtaleDao();
+        deltakelseDao = db.deltakelseDao();
 
         multiSpinner = view.findViewById(R.id.kontaktListe);
         new FetchContactsTask().execute();
@@ -81,6 +88,21 @@ public class AvtalerFragment extends Fragment {
         }
 
     }
+
+    public void lagreAvtale(Avtale avtale, List<Kontakt> valgteKontakter) {
+        // 1. Lagre avtalen
+        long avtaleId = avtaleDao.insert(avtale);
+
+        // 2. For hver valgt kontakt, lagre en deltakelse
+        for (Kontakt kontakt : valgteKontakter) {
+            Deltakelse deltakelse = new Deltakelse();
+            deltakelse.avtaleId = (int) avtaleId;
+            deltakelse.setKid((int) kontakt.getUid());
+
+            deltakelseDao.insert(deltakelse);
+        }
+    }
+
 
 }
 
