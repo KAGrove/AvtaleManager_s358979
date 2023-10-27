@@ -11,15 +11,18 @@ import android.widget.TextView;
 import java.util.List;
 
 public class AvtaleAdapter extends ArrayAdapter<String> {
-
-    private List<String> avtaler;
+    private List<String> avtaleListe;
+    private List<Avtale> avtaleObjekter;
     private Context context;
 
-    public AvtaleAdapter(Context context, List<String> avtaler) {
-        super(context, R.layout.avtale_element, avtaler);  // 'avtale_element' er XML-layouten du delte.
-        this.avtaler = avtaler;
+
+    public AvtaleAdapter(Context context, List<String> avtaleListe, List<Avtale> avtaleObjekter) {
+        super(context, R.layout.avtale_element, avtaleListe);
+        this.avtaleListe = avtaleListe;
+        this.avtaleObjekter = avtaleObjekter;
         this.context = context;
     }
+
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -29,12 +32,28 @@ public class AvtaleAdapter extends ArrayAdapter<String> {
         TextView avtaleInfo = rowView.findViewById(R.id.avtaleInfo);
         Button slettAvtale = rowView.findViewById(R.id.slettAvtale);
 
-        avtaleInfo.setText(avtaler.get(position));
+        avtaleInfo.setText(avtaleListe.get(position));
 
         slettAvtale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                avtaler.remove(position);
+                Avtale avtaleToRemove = avtaleObjekter.get(position);
+                AppDatabase db = DatabaseClient.getInstance(context.getApplicationContext()).getAppDatabase();
+                AvtaleDao avtaleDao = db.avtaleDao();
+                new Thread(() -> {
+                    avtaleDao.delete(avtaleToRemove);
+                }).start();
+
+                DeltakelseDao deltakelseDao = db.deltakelseDao();
+                new Thread(() -> {
+                    deltakelseDao.deleteByAvtaleId(avtaleToRemove.getAvtaleId());
+                }).start();
+
+
+
+                // Slett avtalen fra listene og oppdater adapteren
+                avtaleObjekter.remove(position);
+                avtaleListe.remove(position);
                 notifyDataSetChanged();
             }
         });

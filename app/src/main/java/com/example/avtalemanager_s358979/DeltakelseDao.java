@@ -25,4 +25,8 @@ public interface DeltakelseDao {
 
     @Update
     void update(Deltakelse deltakelse);
+
+    @Query("DELETE FROM Deltakelse WHERE avtale_id = :avtaleId")
+    void deleteByAvtaleId(int avtaleId);
+
 }

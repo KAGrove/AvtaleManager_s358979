@@ -36,6 +36,8 @@ public class AvtalerFragment extends Fragment {
 
     private AvtaleDao avtaleDao;
     private DeltakelseDao deltakelseDao;
+    private List<Avtale> avtaleObjekter = new ArrayList<>();
+
 
 
     @Override
@@ -62,7 +64,7 @@ public class AvtalerFragment extends Fragment {
         avtaleListView = view.findViewById(R.id.avtaleListView);
 
         // Deretter opprett og sett adapteren
-        avtaleAdapter = new AvtaleAdapter(getContext(), avtaleListe);
+        avtaleAdapter = new AvtaleAdapter(getActivity(), avtaleListe, avtaleObjekter);
         avtaleListView.setAdapter(avtaleAdapter);
 
         new FetchAvtalerTask(kontaktDao).execute();
@@ -207,16 +209,19 @@ public class AvtalerFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Pair<Avtale, String>> fetchedData) {
             avtaleListe.clear();
+            avtaleObjekter.clear();
 
             for (Pair<Avtale, String> pair : fetchedData) {
                 Avtale avtale = pair.first;
-                String kontakterTekst = pair.second;
+                avtaleObjekter.add(avtale); // Lagrer Avtale-objektet
 
+                String kontakterTekst = pair.second;
                 String avtaleTekst = avtale.getDato() + " " + avtale.getKlokkeslett() + " - " + avtale.getTreffsted() + "\nKontakter: " + kontakterTekst;
                 avtaleListe.add(avtaleTekst);
             }
             avtaleAdapter.notifyDataSetChanged();
         }
+
     }
 
 
