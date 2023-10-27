@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +22,22 @@ import java.util.List;
 
 public class AvtalerFragment extends Fragment {
 
-    private ListView kontaktListe;
     private List<Kontakt> kontakter;
     private ArrayAdapter<Kontakt> adapter;
+
+    private MultiSpinner multiSpinner;
+
+    private List<Kontakt> valgteKontakter = new ArrayList<>();
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.avtaler, container, false);
+
+        multiSpinner = view.findViewById(R.id.kontaktListe);
+        new FetchContactsTask().execute();
+
+        return view;
+    }
 
     private class FetchContactsTask extends AsyncTask<Void, Void, List<Kontakt>> {
         @Override
@@ -40,30 +54,33 @@ public class AvtalerFragment extends Fragment {
         protected void onPostExecute(List<Kontakt> fetchedContacts) {
             kontakter = fetchedContacts;
 
-            // Bruk en egendefinert adapter for å vise kontakter
-            adapter = new ArrayAdapter<Kontakt>(getActivity(), R.layout.list_item_checkedtextview, R.id.checked_text_item, kontakter){
-                @NonNull
-                @Override
-                public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getView(position, convertView, parent);
-                    TextView text1 = view.findViewById(R.id.checked_text_item);
-                    text1.setText(kontakter.get(position).getFirstName() + " " + kontakter.get(position).getLastName());
-                    return view;
+            adapter = new ArrayAdapter<Kontakt>(getActivity(), android.R.layout.simple_spinner_item, kontakter);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            multiSpinner.setAdapter(adapter);
+
+            // Sett opp MultiSpinner etter at 'kontakter' er fylt
+            List<String> items = new ArrayList<>();
+            for (Kontakt kontakt : kontakter) {
+                items.add(kontakt.toString());
+            }
+            multiSpinner.setItems(items, "Velg Kontakter", selected -> {
+                valgteKontakter.clear();  // Tømmer listen over valgte kontakter først
+                for (int i = 0; i < selected.length; i++) {
+                    if (selected[i]) {  // Hvis kontakten er valgt, legg den til i listen
+                        valgteKontakter.add(kontakter.get(i));
+                    }
                 }
-            };
 
-            kontaktListe.setAdapter(adapter);
+                // Vis en melding for å bekrefte valgte kontakter (valgfritt)
+                StringBuilder melding = new StringBuilder("Valgte kontakter: ");
+                for (Kontakt k : valgteKontakter) {
+                    melding.append(k.toString()).append(", ");
+                }
+                Toast.makeText(getActivity(), melding.toString(), Toast.LENGTH_SHORT).show();
+            });
         }
+
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.avtaler, container, false);
-
-        kontaktListe = view.findViewById(R.id.kontaktListe);
-        new FetchContactsTask().execute();
-
-        return view;
-    }
 }
 

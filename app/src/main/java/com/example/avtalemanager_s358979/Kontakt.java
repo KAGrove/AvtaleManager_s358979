@@ -49,4 +49,10 @@ public class Kontakt {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    @Override
+    public String toString() {
+        return getFirstName() + " " + getLastName();
+    }
+
 }

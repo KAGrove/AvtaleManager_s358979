@@ -71,15 +71,14 @@
         android:hint="Skriv treffsted her" />
 
 
-    <!-- ListView for displaying and selecting contacts -->
-    <ListView
+    <!-- Multispinner for displaying and selecting contacts -->
+    <com.example.avtalemanager_s358979.MultiSpinner
         android:id="@+id/kontaktListe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/stedLabel"
-        android:layout_marginTop="16dp"
-        android:choiceMode="multipleChoice"
-        android:listSelector="@android:color/darker_gray" />
+        android:layout_marginTop="16dp" />
+
 
     <!-- Button for saving the appointment -->
     <Button
