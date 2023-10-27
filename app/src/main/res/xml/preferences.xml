@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Tilpassede Innstillinger">
+
+        <!-- Her er et tekstfelt hvor brukeren kan sette en tilpasset verdi -->
+        <EditTextPreference
+            android:key="custom_key"
+            android:title="Tilpasset Tittel"
+            android:summary="Skriv inn en tilpasset verdi"
+            android:defaultValue="Standard verdi"
+            android:inputType="text" />
+
+        <!-- Her er en bryter for å slå på eller av en tilpasset funksjon -->
+        <SwitchPreferenceCompat
+            android:key="custom_switch"
+            android:title="Tilpasset Bryter"
+            android:summary="Slå av/på tilpasset funksjon"
+            android:defaultValue="false" />
+
+        <!-- Her er en avkrysningsboks for en annen tilpasset funksjon -->
+        <CheckBoxPreference
+            android:key="custom_checkbox"
+            android:title="Tilpasset Avkrysningsboks"
+            android:summary="Velg for tilpasset valg"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
