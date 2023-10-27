@@ -2,12 +2,14 @@ package com.example.avtalemanager_s358979;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,23 +43,55 @@ public class AvtalerFragment extends Fragment {
         deltakelseDao = db.deltakelseDao();
 
         multiSpinner = view.findViewById(R.id.kontaktListe);
-        new FetchContactsTask().execute();
+        KontaktDao kontaktDao = db.kontaktDao();
+        new FetchContactsTask(kontaktDao).execute();
+
+
+        Button btnLagreAvtale = view.findViewById(R.id.lagreAvtale);
+        EditText datoEditText = view.findViewById(R.id.dato);
+        EditText klokkeslettEditText = view.findViewById(R.id.klokkeslett);
+        EditText stedEditText = view.findViewById(R.id.sted);
+
+        btnLagreAvtale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Avtale nyAvtale = new Avtale();
+
+                String datoString = datoEditText.getText().toString();
+                nyAvtale.setDato(datoString);
+
+                String klokkeslettString = klokkeslettEditText.getText().toString();
+                nyAvtale.setKlokkeslett(klokkeslettString);
+
+                String stedString = stedEditText.getText().toString();
+                nyAvtale.setTreffsted(stedString);
+
+                lagreAvtale(nyAvtale, valgteKontakter);
+            }
+        });
+
+
+
+
+
 
         return view;
     }
 
     private class FetchContactsTask extends AsyncTask<Void, Void, List<Kontakt>> {
+        private final KontaktDao kontaktDao;
+
+        public FetchContactsTask(KontaktDao kontaktDao) {
+            this.kontaktDao = kontaktDao;
+        }
+
         @Override
         protected List<Kontakt> doInBackground(Void... voids) {
-            // Initialiser databasen
-            AppDatabase db = DatabaseClient.getInstance(getActivity().getApplicationContext()).getAppDatabase();
-            KontaktDao kontaktDao = db.kontaktDao();
-
             // Hent kontakter fra databasen
             return kontaktDao.getAll();
         }
 
-        @Override
+    @Override
         protected void onPostExecute(List<Kontakt> fetchedContacts) {
             kontakter = fetchedContacts;
 
@@ -90,18 +124,31 @@ public class AvtalerFragment extends Fragment {
     }
 
     public void lagreAvtale(Avtale avtale, List<Kontakt> valgteKontakter) {
-        // 1. Lagre avtalen
-        long avtaleId = avtaleDao.insert(avtale);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                // 1. Lagre avtalen
+                long avtaleId = avtaleDao.insert(avtale);
 
-        // 2. For hver valgt kontakt, lagre en deltakelse
-        for (Kontakt kontakt : valgteKontakter) {
-            Deltakelse deltakelse = new Deltakelse();
-            deltakelse.avtaleId = (int) avtaleId;
-            deltakelse.setKid((int) kontakt.getUid());
+                // 2. For hver valgt kontakt, lagre en deltakelse
+                Log.d("AvtaleApp", "Lagrer avtale med ID: " + avtaleId);
+                for (Kontakt kontakt : valgteKontakter) {
+                    Deltakelse deltakelse = new Deltakelse();
+                    deltakelse.avtaleId = (int) avtaleId;
+                    deltakelse.setKid((int) kontakt.getUid());
+                    Log.d("AvtaleApp", "Lagrer deltakelse med Avtale ID: " + avtaleId + " og Kontakt ID: " + kontakt.getUid());
+                    deltakelseDao.insert(deltakelse);
+                }
+                return null;
+            }
 
-            deltakelseDao.insert(deltakelse);
-        }
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                // Her kan du oppdatere brukergrensesnittet etter at databasetransaksjonen er fullført, om nødvendig.
+            }
+        }.execute();
     }
+
 
 
 }
