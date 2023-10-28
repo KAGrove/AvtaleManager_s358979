@@ -5,9 +5,23 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.room.Room;
+
+import java.util.List;
+
 public class MinSendService extends Service {
 
     private static final String TAG = "MinSendService";
+    private AppDatabase db;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // Initialiser databasen
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "MyUsers").build();
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -18,8 +32,18 @@ public class MinSendService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "MinSendService er kalt.");
 
-        // TODO: Legg til faktisk funksjonalitet her i fremtiden
+        // Hent telefonnumre fra databasen
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Kontakt> kontakter = db.kontaktDao().getAll(); // Forutsetter at du har en DAO-metode som heter getAllKontakter
+                for (Kontakt kontakt : kontakter) {
+                    Log.d(TAG, "Telefonnummer: " + kontakt.getPhoneNumber());
+                }
+            }
+        }).start();
 
         return START_NOT_STICKY;
     }
 }
+
