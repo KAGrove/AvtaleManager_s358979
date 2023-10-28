@@ -1,10 +1,13 @@
 package com.example.avtalemanager_s358979;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,6 +21,8 @@ public class MinSendService extends Service {
 
     private static final String TAG = "MinSendService";
     private AppDatabase db;
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "MinKanal"; // Behold denne linjen
 
     @Override
     public void onCreate() {
@@ -66,6 +71,8 @@ public class MinSendService extends Service {
 
         notifikasjon.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(88, notifikasjon);
+
+        startForeground(NOTIFICATION_ID, notifikasjon);
 
         return START_NOT_STICKY;
     }
