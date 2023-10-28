@@ -4,11 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -52,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        // Hent SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Hent verdien for "sms_service_key"
+        boolean smsPreferenceValue = sharedPreferences.getBoolean("sms_service_key", false); // Her antar jeg at det er en boolean-verdi, du kan endre typen etter behov. 'false' er standardverdien dersom nøkkelen ikke finnes.
+
+        // Logg verdien
+        Log.d("MainActivity", "SmsPreferanse fra Main: " + smsPreferenceValue);
     }
 
     private void loadFragment(Fragment fragment) {
