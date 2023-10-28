@@ -6,6 +6,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,6 +19,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     Button firstFragment, secondFragment, thirdFragment;
+    String CHANNEL_ID = "MinKanal";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Logg verdien
         Log.d("MainActivity", "SmsPreferanse fra Main: " + smsPreferenceValue);
+
+        createNotificationChannel();
     }
 
     private void loadFragment(Fragment fragment) {
@@ -74,4 +79,17 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
     }
+
+    private void createNotificationChannel() {
+        Log.d("I Main", "i createNotificationChannel");
+        CharSequence name = getString(R.string.channel_name);
+        String description = getString(R.string.channel_description);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
 }
