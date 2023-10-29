@@ -13,31 +13,36 @@ import androidx.preference.PreferenceFragmentCompat;
 public class SettingsFragment extends PreferenceFragmentCompat {
     private static final String TAG = "SettingsFragment";
 
-
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         Preference smsPreference = findPreference("sms_service_key");
-        Log.d(TAG, "SmsPreferanse: " + smsPreference);
+        Preference smsTimePreference = findPreference("sms_time");
+
+        // Lytt etter endringer i SMS-tjenesten (på/av)
         if (smsPreference != null) {
-            smsPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if ((boolean) newValue) {
-                        Log.d(TAG, "Preferanse endret til TRUE. Starter tjenesten...");
-                        // Start tjenesten
-                        settPeriodisk();
-                    } else {
-                        Log.d(TAG, "Preferanse endret til FALSE. Stopper tjenesten...");
-                        // Stopp tjenesten
-                        stoppPeriodisk();
-                    }
-                    return true;
+            smsPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean isOn = (boolean) newValue;
+                Log.d(TAG, "SMS-tjeneste " + (isOn ? "på" : "av") + ".");
+                if (isOn) {
+                    settPeriodisk();
+                } else {
+                    stoppPeriodisk();
                 }
+                return true;
             });
         }
 
+        // Lytt etter endringer i tidspunkt-preferansen
+        if (smsTimePreference != null) {
+            smsTimePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                Log.d(TAG, "SMS-tidspunkt endret til: " + newValue);
+                stoppPeriodisk();  // Stopper først tjenesten
+                settPeriodisk();   // Starter tjenesten på nytt med oppdatert tid
+                return true;
+            });
+        }
     }
 
     public void settPeriodisk() {
@@ -48,16 +53,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     public void stoppPeriodisk() {
         Log.d(TAG, "stoppPeriodisk kalt. Forsøker å stoppe tjenesten MinPeriodisk...");
-        Intent i = new Intent(getActivity(), MinSendService.class);
-        PendingIntent pintent = PendingIntent.getService(getActivity(), 0, i, PendingIntent.FLAG_IMMUTABLE);
+        // Opprett en Intent som matcher den som brukes for å sette alarmen i MinPeriodisk
+        Intent i = new Intent(getActivity(), MinPeriodisk.class);
+        // Pass på at requestCode og flags matcher de som ble brukt for å sette opp PendingIntent
+        PendingIntent pintent = PendingIntent.getService(getActivity(), 0, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarm = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         if (alarm != null) {
+            // Bruk den matchende PendingIntent for å kansellere alarmen
             alarm.cancel(pintent);
         }
+
+        // Stopper MinPeriodisk tjenesten
+        getActivity().stopService(new Intent(getActivity(), MinPeriodisk.class));
     }
 
-
 }
-
-
