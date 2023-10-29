@@ -15,7 +15,10 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.room.Room;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MinSendService extends Service {
 
@@ -46,9 +49,28 @@ public class MinSendService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Kontakt> kontakter = db.kontaktDao().getAll(); // Forutsetter at du har en DAO-metode som heter getAllKontakter
-                for (Kontakt kontakt : kontakter) {
-                    Log.d(TAG, "Telefonnummer: " + kontakt.getPhoneNumber());
+                AvtaleDao avtaleDao = db.avtaleDao();
+                DeltakelseDao deltakelseDao = db.deltakelseDao();
+                KontaktDao kontaktDao = db.kontaktDao();
+
+                // Anta at vi får dagens dato her
+                String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                // Hent alle avtaler for dagens dato
+                // List<Avtale> dagensAvtaler = avtaleDao.getAvtaleKontakterForDato(today);
+
+                List<Avtale> alleAvtaler = avtaleDao.getAll();
+
+                for (Avtale avtale : alleAvtaler) {
+                    // Hent deltakelser for hver avtale
+                    List<Deltakelse> deltakelser = deltakelseDao.getDeltakelserForAvtale(avtale.avtaleId);
+
+                    for (Deltakelse deltakelse : deltakelser) {
+                        // For hver deltakelse, finn den tilsvarende kontakten
+                        Kontakt kontakt = kontaktDao.getKontaktById(deltakelse.kid);
+                        Log.d(TAG, "Dato: " + avtale.dato + ", Kontakt: " + kontakt.phoneNumber);
+                        // Legg til logikk for å sende SMS eller notifikasjon
+                    }
                 }
             }
         }).start();
