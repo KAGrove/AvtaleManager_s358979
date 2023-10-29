@@ -7,11 +7,13 @@
         android:summary="Slå SMS-tjenesten av eller på"
         android:defaultValue="false" />
 
-<!--    <TimePickerPreference-->
-<!--        android:key="sms_time"-->
-<!--        android:title="Tidspunkt for SMS"-->
-<!--        android:defaultValue="06:00"-->
-<!--        android:summary="Velg tidspunktet SMS skal sendes" />-->
+    <EditTextPreference
+        android:key="sms_time"
+        android:title="Tidspunkt for SMS"
+        android:dialogTitle="Angi tidspunkt for SMS"
+        android:inputType="time"
+        android:summary="Angi tidspunktet SMS skal sendes i formatet HH:mm"
+        android:defaultValue="06:00" />
 
     <EditTextPreference
         android:key="sms_default_message"
