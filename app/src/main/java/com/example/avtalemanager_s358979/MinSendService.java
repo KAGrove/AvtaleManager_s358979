@@ -53,27 +53,29 @@ public class MinSendService extends Service {
                 DeltakelseDao deltakelseDao = db.deltakelseDao();
                 KontaktDao kontaktDao = db.kontaktDao();
 
-                // Anta at vi får dagens dato her
+                // Få dagens dato
                 String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-                // Hent alle avtaler for dagens dato
-                // List<Avtale> dagensAvtaler = avtaleDao.getAvtaleKontakterForDato(today);
-
+                // Hent alle avtaler
                 List<Avtale> alleAvtaler = avtaleDao.getAll();
 
                 for (Avtale avtale : alleAvtaler) {
-                    // Hent deltakelser for hver avtale
-                    List<Deltakelse> deltakelser = deltakelseDao.getDeltakelserForAvtale(avtale.avtaleId);
+                    // Sjekk om avtalens dato er lik dagens dato
+                    if (avtale.dato.equals(today)) {
+                        // Hent deltakelser for hver avtale
+                        List<Deltakelse> deltakelser = deltakelseDao.getDeltakelserForAvtale(avtale.avtaleId);
 
-                    for (Deltakelse deltakelse : deltakelser) {
-                        // For hver deltakelse, finn den tilsvarende kontakten
-                        Kontakt kontakt = kontaktDao.getKontaktById(deltakelse.kid);
-                        Log.d(TAG, "Dato: " + avtale.dato + ", Kontakt: " + kontakt.phoneNumber);
-                        // Legg til logikk for å sende SMS eller notifikasjon
+                        for (Deltakelse deltakelse : deltakelser) {
+                            // For hver deltakelse, finn den tilsvarende kontakten
+                            Kontakt kontakt = kontaktDao.getKontaktById(deltakelse.kid);
+                            Log.d(TAG, "Dato: " + avtale.dato + ", Tlf: " + kontakt.phoneNumber);
+                            // Her kan du implementere logikk for å sende SMS eller notifikasjon
+                        }
                     }
                 }
             }
         }).start();
+
 
         Log.d("I MinSendService", "før Toast");
         Toast.makeText(getApplicationContext(), "I MinSendService", Toast.LENGTH_SHORT).show();
