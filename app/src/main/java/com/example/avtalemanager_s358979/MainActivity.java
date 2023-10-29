@@ -47,13 +47,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        thirdFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new PreferanserFragment());
-            }
-        });
-
         Intent intent = new Intent(this, SettingsActivity.class);
 
         thirdFragment.setOnClickListener(new View.OnClickListener() {
