@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -19,6 +20,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         Preference smsPreference = findPreference("sms_service_key");
         Preference smsTimePreference = findPreference("sms_time");
+        EditTextPreference smsDefaultMessagePreference = findPreference("sms_default_message");
 
         // Lytt etter endringer i SMS-tjenesten (på/av)
         if (smsPreference != null) {
@@ -43,6 +45,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+
+        // Lytt etter endringer i standard SMS-meldingspreferansen
+        if (smsDefaultMessagePreference != null) {
+            smsDefaultMessagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                String newDefaultMessage = (String) newValue;
+                Log.d(TAG, "Standard SMS-melding endret til: " + newDefaultMessage);
+                stoppPeriodisk();  // Stopper først tjenesten
+                settPeriodisk();   // Starter tjenesten på nytt med oppdatert tid
+                return true; // Return true for å oppdatere verdien i brukergrensesnittet
+            });
+        }
+
     }
 
     public void settPeriodisk() {

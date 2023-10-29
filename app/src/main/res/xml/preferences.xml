@@ -20,6 +20,6 @@
         android:title="Standard SMS-melding"
         android:inputType="text"
         android:summary="Sett standard melding som skal sendes i SMS"
-        android:defaultValue="Din standardmelding her" />
+        android:defaultValue="Husk avtalen vår!" />
 
 </PreferenceScreen>

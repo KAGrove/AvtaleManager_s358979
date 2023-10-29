@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.room.Room;
 
 import java.text.SimpleDateFormat;
@@ -65,6 +67,10 @@ public class MinSendService extends Service {
                 // Hent alle avtaler
                 List<Avtale> alleAvtaler = avtaleDao.getAll();
 
+                // Hent den tilpassede meldingsteksten fra SharedPreferences
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MinSendService.this);
+                String customMessage = prefs.getString("sms_default_message", "Husk avtalen vår!");
+
                 for (Avtale avtale : alleAvtaler) {
                     // Sjekk om avtalens dato er lik dagens dato
                     if (avtale.dato.equals(today)) {
@@ -80,7 +86,16 @@ public class MinSendService extends Service {
                                     Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
 
                                 // Send SMS
-                                String message = "Din påminnelse for avtale på " + avtale.treffsted + " den " + avtale.dato + " klokken " + avtale.klokkeslett;
+                                // Sett sammen meldingen
+                                String message = kontakt.phoneNumber + " " +
+                                        avtale.dato + " " +
+                                        avtale.klokkeslett + " " +
+                                        avtale.treffsted + " - " +
+                                        customMessage;
+
+                                // Logg den sammensatte meldingen før sending
+                                Log.d(TAG, "Sender SMS: " + message);
+
                                 SmsManager smsManager = SmsManager.getDefault();
                                 smsManager.sendTextMessage(kontakt.phoneNumber, null, message, null, null);
 
