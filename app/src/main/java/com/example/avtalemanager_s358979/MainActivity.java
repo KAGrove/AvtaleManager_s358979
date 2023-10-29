@@ -28,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
         secondFragment = (Button) findViewById(R.id.btnKontakter);
         thirdFragment = (Button) findViewById(R.id.btnPreferanser);
 
+        // Last inn AvtalerFragment som startskjerm
+        if (savedInstanceState == null) {
+            loadFragment(new AvtalerFragment());
+        }
+
         firstFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
