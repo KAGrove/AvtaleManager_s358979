@@ -6,19 +6,24 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import android.Manifest;
+
 
 public class MinSendService extends Service {
 
@@ -30,6 +35,7 @@ public class MinSendService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        createNotificationChannel();
 
         // Initialiser databasen
         db = Room.databaseBuilder(getApplicationContext(),
@@ -69,7 +75,21 @@ public class MinSendService extends Service {
                             // For hver deltakelse, finn den tilsvarende kontakten
                             Kontakt kontakt = kontaktDao.getKontaktById(deltakelse.kid);
                             Log.d(TAG, "Dato: " + avtale.dato + ", Tlf: " + kontakt.phoneNumber);
-                            // Her kan du implementere logikk for å sende SMS eller notifikasjon
+                            // Sjekk om tillatelse er gitt
+                            if (ContextCompat.checkSelfPermission(MinSendService.this,
+                                    Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+
+                                // Send SMS
+                                String message = "Din påminnelse for avtale på " + avtale.treffsted + " den " + avtale.dato + " klokken " + avtale.klokkeslett;
+                                SmsManager smsManager = SmsManager.getDefault();
+                                smsManager.sendTextMessage(kontakt.phoneNumber, null, message, null, null);
+
+                                // Logikk for å sende notifikasjon om at SMS er sendt
+                                sendNotification("SMS sendt", "En påminnelse ble sendt til " + kontakt.phoneNumber);
+                            } else {
+                                // Logikk for å sende notifikasjon om at SMS-tillatelse ikke er gitt
+                                sendNotification("SMS ikke sendt", "Tillatelse til å sende SMS er ikke gitt.");
+                            }
                         }
                     }
                 }
@@ -81,24 +101,38 @@ public class MinSendService extends Service {
         Toast.makeText(getApplicationContext(), "I MinSendService", Toast.LENGTH_SHORT).show();
         Log.d("I MinSendService", "etter Toast");
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Intent i = new Intent(this, Resultat.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_IMMUTABLE);
+        return START_NOT_STICKY;
+    }
 
-        Notification notifikasjon = new NotificationCompat.Builder(this, "MinKanal")
-                .setContentTitle("MinNotifikasjon")
-                .setContentText("Tekst")
+    private void sendNotification(String title, String content) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(title)
+                .setContentText(content)
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pIntent)
+                .setAutoCancel(true)
                 .build();
 
-        notifikasjon.flags |= Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(88, notifikasjon);
+        notificationManager.notify(NOTIFICATION_ID, notification);
+    }
 
-        startForeground(NOTIFICATION_ID, notifikasjon);
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
 
-        return START_NOT_STICKY;
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 }
