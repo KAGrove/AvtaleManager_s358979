@@ -12,6 +12,15 @@ Dette prosjektet er en Android-applikasjon utviklet som en del av en skoleoppgav
 - **Daglig Sjekk og Notifikasjoner**: Appen sjekker databasen en gang i døgnet og sender en SMS til de relevante vennene hvis det finnes en avtale.
 - **Preferanser**: Brukeren kan slå SMS-tjenesten av og på, velge tidspunkt for når SMS skal sendes, og sette en standardmelding for SMS.
 
+## Brukerinstruksjoner
+
+### Dato og Klokkeslett Format
+
+- **Dato**: Vennligst registrer dato i følgende format: `yyyy-MM-dd` (for eksempel, `2023-10-29`).
+- **Klokkeslett**: Vennligst registrer klokkeslett i 24-timers format: `HH:mm` (for eksempel, `06:00`).
+
+Merk: Feil format kan føre til uventet oppførsel i applikasjonen.
+
 ## Teknologier
 
 - **Språk**: Java
