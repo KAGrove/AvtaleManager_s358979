@@ -19,7 +19,6 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     Button firstFragment, secondFragment, thirdFragment;
-    String CHANNEL_ID = "MinKanal";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         CharSequence name = getString(R.string.channel_name);
         String description = getString(R.string.channel_description);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        NotificationChannel channel = new NotificationChannel(MinSendService.CHANNEL_ID, name, importance);
         channel.setDescription(description);
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);

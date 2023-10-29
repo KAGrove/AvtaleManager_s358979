@@ -21,8 +21,8 @@ public class MinSendService extends Service {
 
     private static final String TAG = "MinSendService";
     private AppDatabase db;
-    private static final int NOTIFICATION_ID = 1;
-    private static final String CHANNEL_ID = "MinKanal"; // Behold denne linjen
+    public static final int NOTIFICATION_ID = 1;
+    public static final String CHANNEL_ID = "MinKanal"; // Behold denne linjen
 
     @Override
     public void onCreate() {

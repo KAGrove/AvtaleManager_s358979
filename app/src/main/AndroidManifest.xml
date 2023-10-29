@@ -51,6 +51,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".MinBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.avtalemanager_s358979.MY_PERIODIC_TASK" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".Resultat">
         </activity>
